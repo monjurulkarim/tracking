@@ -12,7 +12,7 @@ import cv2 as cv
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--device", default="sample_movie/bird.mp4")
+    parser.add_argument("--device", default="sample_movie/G_02.mp4")
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
 
