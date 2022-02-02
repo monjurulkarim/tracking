@@ -205,7 +205,7 @@ def main():
                 video_file = f"{video_dir}{video_id}.mp4"
                 print(video_file)
                 accident_type = video_track(video_file,cap_width,cap_height, destination_dir)
-                writer.writerow([video_id,frame_1,accident_frame,last_frame, accident_type, 'ok'])
+                writer.writerow([video_id,frame_1,accident_frame,last_frame, accident_type, 'Done'])
             else:
                 writer.writerow(row)
     os.remove(input_file)
