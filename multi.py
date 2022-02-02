@@ -13,7 +13,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--video_dir", default="../sample_movie/")
     parser.add_argument("--files", default="file_list.csv")
-    parser.add_argument("--destination_dir", default = 'tracking_results/')
+    parser.add_argument("--destination_dir", default = 'tracking_results')
     parser.add_argument("--width", help='cap width', type=int, default=1080)
     parser.add_argument("--height", help='cap height', type=int, default=720)
 
@@ -235,7 +235,8 @@ def main():
 
     video_dir = args.video_dir
 
-    destination_dir = args.destination_dir
+    destination_dir1 = args.destination_dir
+    destination_dir = os.path.join(destination_dir1,input_file.split('.')[0])
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
 
