@@ -51,6 +51,14 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
         [255, 0, 0],  # blue
         [0, 0, 255], #red
         [0, 255, 0], #lime
+        [128, 0, 128],  # purple
+        [0, 0, 255],  # red
+        [255, 0, 255],  # fuchsia
+        [0, 128, 0],  # green
+        [128, 128, 0],  # teal
+        [0, 0, 128],  # maroon
+        [0, 128, 128],  # olive
+        [0, 255, 255],  # yellow
     ]
 
     if isint(video_file):
@@ -67,7 +75,7 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
     tracking_csv_file = f"{destination_dir}{window_name.split('.')[0]}.csv"
     with open(tracking_csv_file, 'w', newline= '') as f:
         writer = csv.writer(f)
-        writer.writerow(['frame','Risk_1', 'Risk_2'])
+        writer.writerow(['frame','Risk_1', 'Risk_2', 'Risk3', 'Risk4'])
     f.close()
 
     count = 1
@@ -92,9 +100,22 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
 
         if key == 32:
             tracker = initialize_tracker(window_name, image)
+
+            #for the 2nd risky object if any
             tracker2 = None
             ok2 = None
             bbox2 = None
+
+            #for the 3rd risky object if any
+            tracker3 = None
+            ok3 = None
+            bbox3 = None
+
+            #for the 4th risky object if any
+            tracker4 = None
+            ok4 = None
+            bbox4 = None
+
             frame_num = 0
             while cap.isOpened():
                 tracked_frame = frame_num +  count
@@ -110,18 +131,28 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
                 if tracker2 != None:
                     ok2,bbox2 = tracker2.update(image)
 
+                if tracker3 != None:
+                    ok3,bbox3 = tracker3.update(image)
+
+                if tracker4 != None:
+                    ok4,bbox4 = tracker4.update(image)
+
 
                 elapsed_time = time.time() - start_time
                 if ok:
                     # Bounding box drawing after tracking
-
                     cv.rectangle(debug_image, bbox, color_list[0], thickness=2)
                     with open(tracking_csv_file, 'a+',newline='') as tracking_box:
                         writer = csv.writer(tracking_box)
-                        writer.writerow([tracked_frame,bbox, bbox2])
+                        writer.writerow([tracked_frame,bbox, bbox2, bbox3,bbox4])
 
                 if ok2:
                     cv.rectangle(debug_image, bbox2, color_list[1], thickness=2)
+
+                if ok3:
+                    cv.rectangle(debug_image, bbox3, color_list[2], thickness=2)
+                if ok4:
+                    cv.rectangle(debug_image, bbox4, color_list[3], thickness=2)
 
 
                     # with open(tracking_csv_file, 'w+', newline='') as tracking_box:
@@ -151,8 +182,12 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
                 if k == 32:  # SPACE
                     # redesignation
                     tracker = initialize_tracker(window_name, image)
-                if k == ord('a'): # p
+                if k == ord('a'): # a
                     tracker2 = initialize_tracker(window_name, image)
+                if k == ord('s'): # s
+                    tracker3 = initialize_tracker(window_name, image)
+                if k == ord('d'): # s
+                    tracker4 = initialize_tracker(window_name, image)
 
                 if k == 27:  # ESC
                     break
