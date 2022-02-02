@@ -72,7 +72,7 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
     cv.namedWindow(window_name)
 
     #creating the header for the csv file
-    tracking_csv_file = f"{destination_dir}{window_name.split('.')[0]}.csv"
+    tracking_csv_file = f"{destination_dir}/{window_name.split('.')[0]}.csv"
     with open(tracking_csv_file, 'w', newline= '') as f:
         writer = csv.writer(f)
         writer.writerow(['frame','Risk_1', 'Risk_2', 'Risk3', 'Risk4'])
@@ -237,6 +237,7 @@ def main():
 
     destination_dir1 = args.destination_dir
     destination_dir = os.path.join(destination_dir1,input_file.split('.')[0])
+    print(destination_dir)
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
 
