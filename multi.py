@@ -11,8 +11,8 @@ import cv2 as cv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_dir", default="../sample_movie/")
-    parser.add_argument("--files", default="file_list.csv")
+    parser.add_argument("--video_dir", default="../michael_normal/")
+    parser.add_argument("--files", default="michael_normal.csv")
     parser.add_argument("--destination_dir", default = 'tracking_results')
     parser.add_argument("--width", help='cap width', type=int, default=1080)
     parser.add_argument("--height", help='cap height', type=int, default=720)
@@ -95,6 +95,10 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
             (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
             cv.LINE_AA)
         cv.imshow(window_name,image)
+
+        #pause at the beginning of each video clip
+        if count == 1:
+            cv.waitKey()
         key = cv.waitKey(200) & 0xFF
 
 
@@ -188,6 +192,8 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
                     tracker3 = initialize_tracker(window_name, image)
                 if k == ord('d'): # s
                     tracker4 = initialize_tracker(window_name, image)
+                if k == ord('p'): # Pause button
+                    cv.waitKey()
 
                 if k == 27:  # ESC
                     break
