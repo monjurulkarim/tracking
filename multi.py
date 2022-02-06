@@ -11,8 +11,8 @@ import cv2 as cv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_dir", default="../michael_normal/")
-    parser.add_argument("--files", default="michael_normal.csv")
+    parser.add_argument("--video_dir", default="../sample_movie/")
+    parser.add_argument("--files", default="file_list.csv")
     parser.add_argument("--destination_dir", default = 'tracking_results')
     parser.add_argument("--width", help='cap width', type=int, default=1080)
     parser.add_argument("--height", help='cap height', type=int, default=720)
@@ -100,6 +100,8 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
         if count == 1:
             cv.waitKey()
         key = cv.waitKey(200) & 0xFF
+        if key== ord('p'):
+            cv.waitKey()
 
 
         if key == 32:
