@@ -11,7 +11,7 @@ import cv2 as cv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_dir", default="../sample_movie/")
+    parser.add_argument("--video_dir", default="../demo/")
     parser.add_argument("--files", default="file_list.csv")
     parser.add_argument("--destination_dir", default = 'tracking_results')
     parser.add_argument("--width", help='cap width', type=int, default=1080)
@@ -105,6 +105,7 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
 
 
         if key == 32:
+
             tracker = initialize_tracker(window_name, image)
 
             #for the 2nd risky object if any
@@ -184,11 +185,12 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
 
 
 
-                k = cv.waitKey(1)
+                k = cv.waitKey(100)
                 if k == 32:  # SPACE
                     # redesignation
                     tracker = initialize_tracker(window_name, image)
                 if k == ord('a'): # a
+
                     tracker2 = initialize_tracker(window_name, image)
                 if k == ord('s'): # s
                     tracker3 = initialize_tracker(window_name, image)
