@@ -12,8 +12,9 @@ import csv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--frames_dir", default="output/videos/")
-    parser.add_argument("--destination_dir", default = 'v04feb22/')
+    parser.add_argument("--data_dir", default="../../../../data/")
+    parser.add_argument("--frames_dir", default="crash_dataset_monjurul/vid5/")
+    parser.add_argument("--destination_dir", default = 'clips_frame_encoded/monjurul/')
     args = parser.parse_args()
     return args
 
@@ -22,17 +23,8 @@ def get_args():
 
 def video_generation(image_folder,video_name):
     images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
-    # sample_img = cv2.imread(images[0])
     sample_img = cv2.imread(os.path.join(image_folder, images[0]))
 
-    # print(sample_img.shape)
-    # for img in images:
-    #     print(img)
-    # images = images[frame_1:]
-    # while len(images)<100:
-    #     images.append(images[-1])
-    # images = images[:100]
-    #
     height, width, c = sample_img.shape
     #
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -61,7 +53,12 @@ def video_generation(image_folder,video_name):
 def main():
     args = get_args()
     frames_dir = args.frames_dir
-    destination_dir = args.destination_dir
+    data_dir = args.data_dir
+    frames_folder = data_dir +args.frames_dir
+    frames_dir = os.path.abspath(os.path.join(__file__ ,frames_folder))
+    destination_folder = data_dir + args.destination_dir + '/'
+    destination_dir = os.path.abspath(os.path.join(__file__ ,destination_folder))
+
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
 

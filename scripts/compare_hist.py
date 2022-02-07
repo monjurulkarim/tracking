@@ -21,7 +21,8 @@ def get_args():
     takes the input video directory as an argument.
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument("--frames_dir", default="new_frames/vid5/")
+    parser = add_argument("--data_dir", default="../../../../data/crash_dataset_monjurul/")
+    parser.add_argument("--frames_dir", default="v1/")
     args = parser.parse_args()
     return args
 
@@ -39,11 +40,14 @@ def save_text(starting_frames):
 
 def main():
     args = get_args()
-    frames_dir = args.frames_dir
+    data_dir = args.data_dir
+    folder_dir = data_dir +args.frames_dir
+    frames_dir = os.path.abspath(os.path.join(__file__ ,frames_folder))
     paths = natsorted(glob.glob(os.path.join(frames_dir, '*.jpg')))
     starting_frames = compare_hist(paths)
     save_text(starting_frames)
     return
+
 
 
 def compare_hist(paths):
