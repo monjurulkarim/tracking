@@ -16,35 +16,6 @@ def get_args():
     return args
 
 
-def video_generation(input_video,video_name,frame,risk1,risk2,risk3,risk4):
-    color_list = [
-        [255, 0, 0],  # blue
-        [0, 0, 255], #red
-        [0, 255, 0], #lime
-        [128, 0, 128],  # purple
-        [0, 0, 255],  # red
-        [255, 0, 255],  # fuchsia
-        [0, 128, 0],  # green
-        [128, 128, 0],  # teal
-        [0, 0, 128],  # maroon
-        [0, 128, 128],  # olive
-        [0, 255, 255],  # yellow
-    ]
-    # images = natsorted([img for img in os.listdir(input_video) if img.endswith(".jpg")])
-    # height, width = 720, 1080
-    #
-    # fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    # video = cv2.VideoWriter(video_name, fourcc, 20, (width, height))
-    # print('======================')
-    # print(f"{video_name}...")
-
-    # for i in images:
-
-
-
-
-
-    return
 
 def main():
     args = get_args()
@@ -75,18 +46,12 @@ def main():
     print('======================')
     print(f"{video_name}...")
 
-    # data = np.zeros((100,5))
 
 
     with open(bbox_csv,'r', newline = '') as csvfile:
         reader = csv.reader(csvfile,delimiter=',')
         heading = next(reader)
         value = next(reader)
-        # frame = int(value[0])
-        # risk1 = value[1]
-        # risk1 = re.sub("[()]","", risk1)
-        # risk1 = [int(i) for i in risk1.split(',')]
-
 
         for i in range(100):
             img = cv2.imread(os.path.join(input_video, images[i]))
@@ -124,33 +89,6 @@ def main():
         video.release()
 
     return
-
-
-        # print(int(value[0]))
-    #     data = 0
-    #     for row in reader:
-    #         frame, risk1, risk2,risk3,risk4 = row
-    #         # for ind in range(len(images)):
-    #         #     if ind < int(frame):
-    #         #         print('before tracking :',ind)
-    #         #     elif ind == int(frame):
-    #         #         print('tracking :',ind)
-    #         #     else:
-    #         #         print('no-tracking :',ind)
-    #
-    #
-    #             # risk1 = re.sub("[()]","", risk1)
-    #             # # risk1 = [int(i) for i in risk1.split(',')]
-    #             # risk2 = re.sub("[()]","", risk2)
-    #             # risk3 = re.sub("[()]","", risk3)
-    #             # risk4 = re.sub("[()]","", risk4)
-    #             data.append([frame,risk1,risk2,risk3,risk4])
-    #
-    # print(data[0])
-    # video_generation(input_video,video_name,frame,risk1,risk2,risk3,risk4)
-                # # print(int(risk1))
-                # print(risk2.split(','))
-
 
 
 if __name__ == '__main__':
