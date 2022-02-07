@@ -26,6 +26,7 @@ def video_generation(image_folder, video_name, frame_1):
     height, width = 720, 1080
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    # fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
     video = cv2.VideoWriter(video_name, fourcc, 20, (width, height))
     print('======================')
     print(f"{video_name}...")
