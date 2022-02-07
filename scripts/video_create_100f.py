@@ -1,3 +1,13 @@
+'''
+This is special video generation script. The purpose of this script is to
+create videos with 100 frames.
+It reads a csv file where the video_id, starting frame, accident start frame,
+last frame are given. Reading line by line this script creates video.
+Input: video frames directory + csv file
+Output: mp4 video with 100 frames
+'''
+
+
 import cv2
 import os
 from natsort import natsorted
