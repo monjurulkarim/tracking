@@ -44,10 +44,10 @@ import os.path as osp
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_video", default="../back_demo")
-    parser.add_argument("--bbox_dir", default="./tracking_results/file_list/")
+    parser.add_argument("--input_video", default="../demo_frames") #frames directory
+    parser.add_argument("--bbox_dir", default="./tracking_results/file_list/") #csv files directory
     parser.add_argument("--destination_dir", default="demo_results/") # demo video will be saved here
-    parser.add_argument("--demo_frame_dir", default="backward/") # from the demo video converted frames will be saved here
+    parser.add_argument("--demo_frame_dir", default="backward_extracted/") # from the demo video converted frames will be saved here
     parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
     args = parser.parse_args()
     return args
@@ -95,9 +95,7 @@ def FrameExtract(input_dir,destination_dir,*args):
                     saved_path = '/'+ vname_slice[0]
 
                     destination_2 = destination_dir + saved_path
-                    print('++++++++++++++++++++++')
-                    print(destination_2)
-                    print('-------------------')
+
                     if not os.path.exists(destination_2):
                         os.makedirs(destination_2)
 
@@ -138,6 +136,7 @@ def main():
     input_video = args.input_video
     direction = args.direction
     input_video_list = os.listdir(input_video)
+    print(input_video_list)
 
     bbox_dir = args.bbox_dir
     for folder in input_video_list:
@@ -202,11 +201,13 @@ def main():
         input_dir =args.destination_dir
         destination_dir = args.demo_frame_dir
         folder_lists = os.listdir(destination_dir)
+
         '''
         Converted video frames will be joined to create a video and will replace the original backward
         video. Thus as a final video we will get a forward going video.
         '''
         for folder in folder_lists:
+            video_name = f"{args.destination_dir}{folder}.mp4"
             frame_dir = os.path.join(destination_dir, folder)
             video_generation(frame_dir, video_name, direction)
     return

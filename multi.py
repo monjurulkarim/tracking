@@ -152,8 +152,6 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
                     ok, bbox = tracker.update(image)
                     if k == ord('v'):
                         ok, bbox, tracker = None, None, None
-sample_movie
-
 
                 if tracker2 != None:
                     ok2,bbox2 = tracker2.update(image)
