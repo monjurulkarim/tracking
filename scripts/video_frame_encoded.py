@@ -30,7 +30,7 @@ def video_generation(image_folder,video_name, direction):
     else:
         print("something is not right")
 
-    print('image folder',images)
+
     sample_img = cv2.imread(os.path.join(image_folder, images[0]))
 
     height, width, c = sample_img.shape
