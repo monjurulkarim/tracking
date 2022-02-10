@@ -20,7 +20,6 @@ def get_args():
 
 
 
-
 def video_generation(image_folder,video_name):
     images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
     sample_img = cv2.imread(os.path.join(image_folder, images[0]))
