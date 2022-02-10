@@ -11,7 +11,7 @@ import cv2 as cv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_dir", default="../sample_movie/")
+    parser.add_argument("--video_dir", default="../backward/")
     parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
     parser.add_argument("--files", default="file_list.csv")
     parser.add_argument("--destination_dir", default = 'tracking_results')
@@ -152,7 +152,7 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
                     ok, bbox = tracker.update(image)
                     if k == ord('v'):
                         ok, bbox, tracker = None, None, None
-
+sample_movie
 
 
                 if tracker2 != None:

@@ -38,18 +38,23 @@ import csv
 import pandas as pd
 import re
 import numpy as np
+from scripts.video_frame_encoded import video_generation
+import sys
+import os.path as osp
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_video", default="../demo")
+    parser.add_argument("--input_video", default="../back_demo")
     parser.add_argument("--bbox_dir", default="./tracking_results/file_list/")
-    parser.add_argument("--destination_dir", default="demo_results/")
+    parser.add_argument("--destination_dir", default="demo_results/") # demo video will be saved here
+    parser.add_argument("--demo_frame_dir", default="backward/") # from the demo video converted frames will be saved here
     parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
     args = parser.parse_args()
     return args
 
 def FrameExtract(input_dir,destination_dir,*args):
     video_list = os.listdir(input_dir)
+
     assert len(video_list) != 0, "No files in the input directory"
 
     if not os.path.exists(destination_dir):
@@ -58,6 +63,7 @@ def FrameExtract(input_dir,destination_dir,*args):
     count =0
     for i in range(len(video_list)):
         filename = os.path.join(input_dir,video_list[i])
+
         video_list[i]
         vname_slice = video_list[i].split('.')
         print(vname_slice[0])
@@ -87,13 +93,19 @@ def FrameExtract(input_dir,destination_dir,*args):
                     frame_name = vname_slice[0] +'_frame_%d.jpg' %loop
                     images.append(frame_name)
                     saved_path = '/'+ vname_slice[0]
+
                     destination_2 = destination_dir + saved_path
+                    print('++++++++++++++++++++++')
+                    print(destination_2)
+                    print('-------------------')
                     if not os.path.exists(destination_2):
                         os.makedirs(destination_2)
 
                     saved_dir = osp.join(destination_2, frame_name)
+
                     cv2.imwrite(saved_dir,image)
                 except:
+                    # print('it is here')
                     continue
         count = count + 1
         cap.release()
@@ -124,14 +136,18 @@ def main():
     height, width = 720, 1080
     args = get_args()
     input_video = args.input_video
+    direction = args.direction
     input_video_list = os.listdir(input_video)
+
     bbox_dir = args.bbox_dir
     for folder in input_video_list:
         video_name = f"{args.destination_dir}{folder}.mp4"
-        if not os.path.exists(video_name):
-            os.makedirs(video_name)
+        # if not os.path.exists(video_name):
+        #     os.makedirs(video_name)
         image_folder = os.path.join(input_video,folder)
         images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
+        if direction=="backward":
+            images = [ele for ele in reversed(images)]
         bbox_csv = f"{bbox_dir}{folder}.csv"
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -180,9 +196,19 @@ def main():
             cv2.destroyAllWindows()
             video.release()
     if direction == 'backward':
+        '''
+        Will convert video frames from the created demo
+        '''
         input_dir =args.destination_dir
-        destination_dir = args.destination_dir
-        FrameExtract(input_dir,destination_dir)
+        destination_dir = args.demo_frame_dir
+        folder_lists = os.listdir(destination_dir)
+        '''
+        Converted video frames will be joined to create a video and will replace the original backward
+        video. Thus as a final video we will get a forward going video.
+        '''
+        for folder in folder_lists:
+            frame_dir = os.path.join(destination_dir, folder)
+            video_generation(frame_dir, video_name, direction)
     return
 
 

@@ -8,26 +8,29 @@ from natsort import natsorted
 import argparse
 import sys
 import csv
+import sys
 # import pandas as pd
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", default="../../../../tracking/")
     parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
-    parser.add_argument("--frames_dir", default="demo/")
-    parser.add_argument("--destination_dir", default = 'regular/')
+    parser.add_argument("--frames_dir", default="../../demo_frames/")
+    parser.add_argument("--destination_dir", default = '../../backward/')
     args = parser.parse_args()
     return args
 
 
 
-def video_generation(image_folder,video_name):
+def video_generation(image_folder,video_name, direction):
     if direction == "forward":
         images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
     elif direction == "backward":
+        images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
         images = [ele for ele in reversed(images)] #for reversed video
     else:
         print("something is not right")
+
+    print('image folder',images)
     sample_img = cv2.imread(os.path.join(image_folder, images[0]))
 
     height, width, c = sample_img.shape
@@ -60,15 +63,12 @@ def video_generation(image_folder,video_name):
 def main():
     args = get_args()
     frames_dir = args.frames_dir
-    data_dir = args.data_dir
-    frames_folder = data_dir +args.frames_dir
     direction = args.direction
-    frames_dir = os.path.abspath(os.path.join(__file__ ,frames_folder))
-    destination_folder = data_dir + args.destination_dir + '/'
-    destination_dir = os.path.abspath(os.path.join(__file__ ,destination_folder))
-
+    destination_dir = args.destination_dir
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
+    print(os.listdir(frames_dir))
+
 
     folder_lists = os.listdir(frames_dir)
     for folder in folder_lists:
