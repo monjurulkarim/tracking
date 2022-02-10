@@ -11,7 +11,8 @@ import cv2 as cv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_dir", default="../demo/")
+    parser.add_argument("--video_dir", default="../sample_movie/")
+    parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
     parser.add_argument("--files", default="file_list.csv")
     parser.add_argument("--destination_dir", default = 'tracking_results')
     parser.add_argument("--width", help='cap width', type=int, default=1080)
@@ -46,7 +47,7 @@ def initialize_tracker(window_name, image):
         return tracker
 
 
-def video_track(video_file,cap_width, cap_height, destination_dir, accident_type):
+def video_track(video_file,cap_width, cap_height, destination_dir, accident_type,direction):
     color_list = [
         [255, 0, 0],  # blue
         [0, 0, 255], #red
@@ -89,11 +90,22 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
             except:
                 sys.exit("Can't read first frame")
         # cv.namedWindow(window_name)
-        cv.putText(
-            image,
-            'Frame # ' + str(count),
-            (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
-            cv.LINE_AA)
+        if direction == "forward":
+            cv.putText(
+                image,
+                'Frame # ' + str(count),
+                (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
+                cv.LINE_AA)
+        elif direction == "backward":
+            cv.putText(
+                image,
+                'Frame # ' + str(100 -count),
+                (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
+                cv.LINE_AA)
+        else:
+            raise ValueError('please select direction from forward and backward')
+
+
         cv.imshow(window_name,image)
 
         #pause at the beginning of each video clip
@@ -124,6 +136,7 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
             bbox4 = None
 
             frame_num = 0
+
             while cap.isOpened():
                 tracked_frame = frame_num +  count
                 ret, image = cap.read()
@@ -133,22 +146,48 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
 
                 # Tracking update
                 start_time = time.time()
-                ok, bbox = tracker.update(image)
+                # ley = cv.waitKey(100)
+                k = cv.waitKey(100)
+                if tracker != None:
+                    ok, bbox = tracker.update(image)
+                    if k == ord('v'):
+                        ok, bbox, tracker = None, None, None
+
+
 
                 if tracker2 != None:
                     ok2,bbox2 = tracker2.update(image)
 
+                    if k == ord('z'):
+                        ok2,bbox2, tracker2 = None, None, None
+
                 if tracker3 != None:
                     ok3,bbox3 = tracker3.update(image)
+                    if k == ord('x'):
+                        ok3, bbox3, tracker3 = None, None, None
 
                 if tracker4 != None:
                     ok4,bbox4 = tracker4.update(image)
+                    if k == ord('c'):
+                        ok4, bbox4, tracker4 = None, None, None
 
 
                 elapsed_time = time.time() - start_time
                 if ok:
                     # Bounding box drawing after tracking
                     cv.rectangle(debug_image, bbox, color_list[0], thickness=2)
+                    with open(tracking_csv_file, 'a+',newline='') as tracking_box:
+                        writer = csv.writer(tracking_box)
+                        writer.writerow([tracked_frame,bbox, bbox2, bbox3,bbox4])
+                elif ok2:
+                    with open(tracking_csv_file, 'a+',newline='') as tracking_box:
+                        writer = csv.writer(tracking_box)
+                        writer.writerow([tracked_frame,bbox, bbox2, bbox3,bbox4])
+                elif ok3:
+                    with open(tracking_csv_file, 'a+',newline='') as tracking_box:
+                        writer = csv.writer(tracking_box)
+                        writer.writerow([tracked_frame,bbox, bbox2, bbox3,bbox4])
+                else:
                     with open(tracking_csv_file, 'a+',newline='') as tracking_box:
                         writer = csv.writer(tracking_box)
                         writer.writerow([tracked_frame,bbox, bbox2, bbox3,bbox4])
@@ -169,23 +208,34 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
                     #     writer.writerows([[tracked_frame,bbox]])
 
                 # Processing time
-                cv.putText(
-                    debug_image,
-                    'Frame # ' + str(tracked_frame),
-                    (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
-                    cv.LINE_AA)
-                cv.putText(
-                    debug_image,
-                    'DaSiamRPN' + " : " + '{:.1f}'.format(elapsed_time * 1000) + "ms",
-                    (10, 50), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[0], 2,
-                    cv.LINE_AA)
+                if direction == "forward":
+                    cv.putText(
+                        debug_image,
+                        'Frame # ' + str(tracked_frame),
+                        (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
+                        cv.LINE_AA)
+                    cv.putText(
+                        debug_image,
+                        'DaSiamRPN' + " : " + '{:.1f}'.format(elapsed_time * 1000) + "ms",
+                        (10, 50), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[0], 2,
+                        cv.LINE_AA)
+                elif direction == "backward":
+                    cv.putText(
+                        debug_image,
+                        'Frame # ' + str(100-tracked_frame),
+                        (10, 25), cv.FONT_HERSHEY_SIMPLEX, 0.7, color_list[1], 2,
+                        cv.LINE_AA)
+                else:
+                    print('Something is wrong')
+
+                # if tracked_frame == 99:
+                #     cv.waitKey()
 
                 cv.imshow(window_name, debug_image)
                 frame_num +=1
 
 
-
-                k = cv.waitKey(100)
+                # k = cv.waitKey(100)
                 if k == 32:  # SPACE
                     # redesignation
                     tracker = initialize_tracker(window_name, image)
@@ -205,9 +255,10 @@ def video_track(video_file,cap_width, cap_height, destination_dir, accident_type
             count = tracked_frame
             count +=1
             tracked_frame = count
+
         except:
             count+=1
-        # print(count)
+
 
     cv.destroyAllWindows()
     if accident_type == '':
@@ -244,6 +295,7 @@ def main():
     tmp_file = f"{input_file}.tmp"
 
     video_dir = args.video_dir
+    direction = args.direction
 
     destination_dir1 = args.destination_dir
     destination_dir = os.path.join(destination_dir1,input_file.split('.')[0])
@@ -271,7 +323,7 @@ def main():
                 if video_id != 'video_id':
                     video_file = f"{video_dir}{video_id}.mp4"
                     print(video_file)
-                    accident_type = video_track(video_file,cap_width,cap_height, destination_dir,accident_type)
+                    accident_type = video_track(video_file,cap_width,cap_height, destination_dir,accident_type,direction)
                     writer.writerow([video_id,frame_1,accident_frame,last_frame, accident_type, 'Done'])
                 else:
                     continue
