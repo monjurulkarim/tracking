@@ -12,9 +12,10 @@ import csv
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", default="../../../../data/")
-    parser.add_argument("--frames_dir", default="crash_dataset_monjurul/vid5/")
-    parser.add_argument("--destination_dir", default = 'clips_frame_encoded/monjurul/')
+    parser.add_argument("--data_dir", default="../../../../tracking/")
+    parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
+    parser.add_argument("--frames_dir", default="demo/")
+    parser.add_argument("--destination_dir", default = 'regular/')
     args = parser.parse_args()
     return args
 
@@ -22,7 +23,12 @@ def get_args():
 
 
 def video_generation(image_folder,video_name):
-    images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
+    if direction == "forward":
+        images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
+    elif direction == "backward":
+        images = [ele for ele in reversed(images)] #for reversed video
+    else:
+        print("something is not right")
     sample_img = cv2.imread(os.path.join(image_folder, images[0]))
 
     height, width, c = sample_img.shape
@@ -37,12 +43,14 @@ def video_generation(image_folder,video_name):
     for i in images:
         img = cv2.imread(os.path.join(image_folder, i))
         # cv2.rectangle(img, (x, x), (x + w, y + h), (0,0,0), -1)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0,0,0), -1)
-        cv2.putText(
-                    img,
-                    str(count),
-                    (x + int(w/10),y + int(h/2)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, [255,255,255], 2,
-                    cv2.LINE_AA)
+        if direction == "forward":
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0,0,0), -1)
+            cv2.putText(
+                        img,
+                        str(count),
+                        (x + int(w/10),y + int(h/2)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, [255,255,255], 2,
+                        cv2.LINE_AA)
+
         video.write(img)
         count += 1
     #
@@ -55,6 +63,7 @@ def main():
     frames_dir = args.frames_dir
     data_dir = args.data_dir
     frames_folder = data_dir +args.frames_dir
+    direction = args.direction
     frames_dir = os.path.abspath(os.path.join(__file__ ,frames_folder))
     destination_folder = data_dir + args.destination_dir + '/'
     destination_dir = os.path.abspath(os.path.join(__file__ ,destination_folder))
@@ -66,7 +75,7 @@ def main():
     for folder in folder_lists:
         frame_dir = os.path.join(frames_dir, folder)
         video_name = f"{destination_dir}{folder}.mp4"
-        video_generation(frame_dir,video_name)
+        video_generation(frame_dir,video_name,direction)
 
     return print('===========finished=============')
 
