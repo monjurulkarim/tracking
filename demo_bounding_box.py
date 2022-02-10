@@ -47,10 +47,6 @@ def get_args():
     return args
 
 
-def trajectory():
-
-    return
-
 
 
 def main():
@@ -93,10 +89,11 @@ def main():
                 if i< int(value[0]):
                     video.write(img)
                 elif i == int(value[0]):
-                    risk1 = value[1]
-                    risk1 = re.sub("[()]","", risk1)
-                    risk1 = [int(i) for i in risk1.split(',')]
-                    cv2.rectangle(img, risk1, color_list[0], thickness=2)
+                    if value[1] != '':
+                        risk1 = value[1]
+                        risk1 = re.sub("[()]","", risk1)
+                        risk1 = [int(i) for i in risk1.split(',')]
+                        cv2.rectangle(img, risk1, color_list[0], thickness=2)
                     if value[2] != '':
                         risk2 = value[2]
                         risk2 = re.sub("[()]","", risk2)
