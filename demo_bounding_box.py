@@ -43,9 +43,67 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_video", default="../demo")
     parser.add_argument("--bbox_dir", default="./tracking_results/file_list/")
+    parser.add_argument("--destination_dir", default="demo_results/")
+    parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
     args = parser.parse_args()
     return args
 
+def FrameExtract(input_dir,destination_dir,*args):
+    video_list = os.listdir(input_dir)
+    assert len(video_list) != 0, "No files in the input directory"
+
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+
+    count =0
+    for i in range(len(video_list)):
+        filename = os.path.join(input_dir,video_list[i])
+        video_list[i]
+        vname_slice = video_list[i].split('.')
+        print(vname_slice[0])
+
+        cap = cv2.VideoCapture(filename)
+        fps = round(cap.get(cv2.CAP_PROP_FPS))
+        print(fps)
+        images =[]
+
+
+    #     check if capture was successful
+        if not cap.isOpened():
+            print("Could not open!")
+        else:
+            print("Video read successful!")
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            print('Extracting frames from: ', video_list[i])
+            for loop in range(total_frames):
+                cap = cv2.VideoCapture(filename)
+                cap.set(1,loop)
+                success = cap.grab()
+                ret, image = cap.retrieve()
+                try:
+                    if args:
+                        for arg in args:
+                            image = cv2.resize(image,arg)
+                    frame_name = vname_slice[0] +'_frame_%d.jpg' %loop
+                    images.append(frame_name)
+                    saved_path = '/'+ vname_slice[0]
+                    destination_2 = destination_dir + saved_path
+                    if not os.path.exists(destination_2):
+                        os.makedirs(destination_2)
+
+                    saved_dir = osp.join(destination_2, frame_name)
+                    cv2.imwrite(saved_dir,image)
+                except:
+                    continue
+        count = count + 1
+        cap.release()
+        cv2.destroyAllWindows()
+    print('+++++++++++++++++++++++++++++')
+    if args:
+        print(f'Extracted frames have been resized to {args[0]}')
+    print(f'Total {count} video/s completed.')
+    print('+++++++++++++++++++++++++++++')
+    return
 
 
 
@@ -69,7 +127,9 @@ def main():
     input_video_list = os.listdir(input_video)
     bbox_dir = args.bbox_dir
     for folder in input_video_list:
-        video_name = f"{folder}.mp4"
+        video_name = f"{args.destination_dir}{folder}.mp4"
+        if not os.path.exists(video_name):
+            os.makedirs(video_name)
         image_folder = os.path.join(input_video,folder)
         images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
         bbox_csv = f"{bbox_dir}{folder}.csv"
@@ -119,7 +179,10 @@ def main():
 
             cv2.destroyAllWindows()
             video.release()
-
+    if direction == 'backward':
+        input_dir =args.destination_dir
+        destination_dir = args.destination_dir
+        FrameExtract(input_dir,destination_dir)
     return
 
 
