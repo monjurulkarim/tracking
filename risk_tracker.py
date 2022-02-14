@@ -22,6 +22,7 @@ def get_args():
     return args
 
 
+
 def log_information(video_id):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
@@ -29,9 +30,12 @@ def log_information(video_id):
     formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
 
     file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    if not logger.hasHandlers():
+        logger.addHandler(file_handler)
     logger.info(f"---------{video_id}.mp4--Completed")
     return
+
+
 
 class Tracking():
     def __init__(self, cap_width,cap_height, destination_dir, direction):
