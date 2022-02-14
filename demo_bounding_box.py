@@ -41,11 +41,12 @@ import numpy as np
 from scripts.video_frame_encoded import video_generation
 import sys
 import os.path as osp
+import shutil
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_video", default="../demo_frames") #frames directory
-    parser.add_argument("--bbox_dir", default="./tracking_results/file_list/") #csv files directory
+    parser.add_argument("--input_video", default="../sample_movie") #frames directory
+    parser.add_argument("--bbox_dir", default="./tracking_results/michael_rain/") #csv files directory
     parser.add_argument("--destination_dir", default="demo_results/") # demo video will be saved here
     parser.add_argument("--demo_frame_dir", default="backward_extracted/") # from the demo video converted frames will be saved here
     parser.add_argument("--direction", type=str, default="forward", choices= ["forward","backward"], help='video direction forward or backward, default: forward')
@@ -53,9 +54,10 @@ def get_args():
     return args
 
 def FrameExtract(input_dir,destination_dir,*args):
-    video_list = os.listdir(input_dir)
+    # video_list = os.listdir(input_dir)
+    video_list = natsorted([vid for vid in os.listdir(input_dir) if vid.endswith(".mp4")])
 
-    assert len(video_list) != 0, "No files in the input directory"
+    assert len(video_list) != 0, "No videos in the input directory"
 
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
@@ -66,11 +68,11 @@ def FrameExtract(input_dir,destination_dir,*args):
 
         video_list[i]
         vname_slice = video_list[i].split('.')
-        print(vname_slice[0])
+        # print(vname_slice[0])
 
         cap = cv2.VideoCapture(filename)
         fps = round(cap.get(cv2.CAP_PROP_FPS))
-        print(fps)
+        # print(fps)
         images =[]
 
 
@@ -78,7 +80,7 @@ def FrameExtract(input_dir,destination_dir,*args):
         if not cap.isOpened():
             print("Could not open!")
         else:
-            print("Video read successful!")
+            # print("Video read successful!")
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             print('Extracting frames from: ', video_list[i])
             for loop in range(total_frames):
@@ -115,7 +117,14 @@ def FrameExtract(input_dir,destination_dir,*args):
     print('+++++++++++++++++++++++++++++')
     return
 
-
+def frame_extract(input):
+    print('---Frame extracting---')
+    destination_dir = '../demo_frames'
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+    FrameExtract(input,destination_dir)
+    print('--Frame extraction completed---')
+    return destination_dir
 
 def main():
     color_list = [
@@ -135,19 +144,28 @@ def main():
     args = get_args()
     input_video = args.input_video
     direction = args.direction
-    input_video_list = os.listdir(input_video)
-    print(input_video_list)
+    # input_video_list = os.listdir(input_video)
+
+
+
+    input_video = frame_extract(input_video)
+    print('-----Demo generation started-----')
 
     bbox_dir = args.bbox_dir
+    input_video_list = natsorted([file for file in os.listdir(input_video)])
     for folder in input_video_list:
+        if not os.path.exists(args.destination_dir):
+            os.makedirs(args.destination_dir)
         video_name = f"{args.destination_dir}{folder}.mp4"
         # if not os.path.exists(video_name):
         #     os.makedirs(video_name)
         image_folder = os.path.join(input_video,folder)
+        # print('image_folder : ', image_folder)
         images = natsorted([img for img in os.listdir(image_folder) if img.endswith(".jpg")])
         if direction=="backward":
             images = [ele for ele in reversed(images)]
         bbox_csv = f"{bbox_dir}{folder}.csv"
+        print('bbox_csv ',bbox_csv)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         video = cv2.VideoWriter(video_name, fourcc, 20, (width, height))
@@ -157,8 +175,11 @@ def main():
         with open(bbox_csv,'r', newline = '') as csvfile:
             reader = csv.reader(csvfile,delimiter=',')
             heading = next(reader)
-            value = next(reader)
-
+            try:
+                value = next(reader)
+            except:
+                print('No tracking information found for ', video_name)
+                pass
             for i in range(100):
                 img = cv2.imread(os.path.join(image_folder, images[i]))
                 if i< int(value[0]):
@@ -192,6 +213,7 @@ def main():
                 else:
                     video.write(img)
 
+
             cv2.destroyAllWindows()
             video.release()
     if direction == 'backward':
@@ -210,7 +232,7 @@ def main():
             video_name = f"{args.destination_dir}{folder}.mp4"
             frame_dir = os.path.join(destination_dir, folder)
             video_generation(frame_dir, video_name, direction)
-    return
+    return shutil.rmtree(input_video)
 
 
 
