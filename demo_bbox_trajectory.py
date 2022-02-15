@@ -41,7 +41,7 @@ import numpy as np
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_video", default="../demo")
+    parser.add_argument("--input_video", default="../demo_frames")
     parser.add_argument("--bbox_dir", default="./tracking_results/file_list/")
     args = parser.parse_args()
     return args
@@ -94,37 +94,42 @@ def main():
             centroid_center_r2 = 0
             centroid_center_r3 = 0
             centroid_center_r4 = 0
-            for i in range(100):
-                img = cv2.imread(os.path.join(image_folder, images[i]))
-                if i< int(value[0]):
+            for j in range(100):
+                img = cv2.imread(os.path.join(image_folder, images[j]))
+                if j< int(value[0]):
                     video.write(img)
-                elif i == int(value[0]):
-                    risk1 = value[1]
-                    risk1 = re.sub("[()]","", risk1)
-                    risk1 = [int(i) for i in risk1.split(',')]
-                    center1 = (int((risk1[0]+risk1[2]/2)),int((risk1[1]+risk1[3]/2)))
-                    cv2.rectangle(img, risk1, color_list[0], thickness=2)
-                    cv2.circle(img,center1,5,color_list[0],-1)
-                    pts1.appendleft(center1)
-                    centroid_center_r1+=1
+                elif j == int(value[0]):
+                    if value[1] !='':
+                        risk1 = value[1]
+                        risk1 = re.sub("[()]","", risk1)
+                        risk1 = [int(i) for i in risk1.split(',')]
+                        center1 = (int((risk1[0]+risk1[2]/2)),int((risk1[1]+risk1[3]/2)))
+                        cv2.rectangle(img, risk1, color_list[0], thickness=2)
+                        cv2.circle(img,center1,5,color_list[0],-1)
+                        pts1.appendleft(center1)
 
-                    # if centroid_center_r1 > 2:
-                    try:
-                        pts_r1=[item for item in pts1]
-                        pts_r1 = np.array(pts_r1)
-                        thickness =  int(np.sqrt(36 / float(centroid_center_r1 + 1)) * 2.5)
-                        cc = 0
-                        for point1, point2 in zip(pts_r1,pts_r1[1:]):
-                            if cc < 5:
-                                cv2.line(img, point1,point2, color_list[0], thickness=7)
-                                cc+=1
-                            else:
-                                cv2.line(img, point1,point2, color_list[0], thickness)
-                                cc+=1
-                        # cv2.line(img, pts[centroid_center_r1 - 2], pts[centroid_center_r1-1], color_list[0], thickness)
-                        # cv2.line(img, pts_r1, color_list[0], thickness)
-                    except:
-                        print('skipped from 1st object')
+                        centroid_center_r1+=1
+
+                        # if centroid_center_r1 > 2:
+                        try:
+                            pts_r1=[item for item in pts1]
+                            pts_r = np.array(pts_r1)
+                            thickness =  int(np.sqrt(36 / float(centroid_center_r1 + 1)) * 2.5)
+
+                            cc = 0
+                            for point1, point2 in zip(pts_r,pts_r[1:]):
+                                cv2.line(img, point1,point2, color_list[0], thickness=2)
+                                # sys.exit()
+                                # if cc < 5:
+                                #     cv2.line(img, point1,point2, color_list[0], thickness=7)
+                                #     cc+=1
+                                # else:
+                                #     cv2.line(img, point1,point2, color_list[0], thickness)
+                                #     cc+=1
+                            # cv2.line(img, pts[centroid_center_r1 - 2], pts[centroid_center_r1-1], color_list[0], thickness)
+                            # cv2.line(img, pts_r1, color_list[0], thickness)
+                        except:
+                            print('skipped from 1st object')
                     if value[2] != '':
                         risk2 = value[2]
                         risk2 = re.sub("[()]","", risk2)
@@ -141,12 +146,13 @@ def main():
                             thickness =  int(np.sqrt(36 / float(centroid_center_r2 + 1)) * 2.5)
                             dd = 0
                             for point1, point2 in zip(pts_r2,pts_r2[1:]):
-                                if dd < 5:
-                                    cv2.line(img, point1,point2, color_list[1], thickness=7)
-                                    dd+=1
-                                else:
-                                    cv2.line(img, point1,point2, color_list[1], thickness)
-                                    dd+=1
+                                cv2.line(img, point1,point2, color_list[1], thickness=2)
+                                # if dd < 5:
+                                #     cv2.line(img, point1,point2, color_list[1], thickness=7)
+                                #     dd+=1
+                                # else:
+                                #     cv2.line(img, point1,point2, color_list[1], thickness)
+                                #     dd+=1
                             # cv2.line(img, pts[centroid_center_r1 - 2], pts[centroid_center_r1-1], color_list[0], thickness)
                             # cv2.line(img, pts1, color_list[0], thickness)
                         except:
@@ -159,22 +165,23 @@ def main():
                         center3 = (int((risk3[0]+risk3[2]/2)),int((risk3[1]+risk3[3]/2)))
                         cv2.rectangle(img, risk3, color_list[2], thickness=2)
                         cv2.circle(img,center3,5,color_list[2],-1)
-                        pts3.appendleft(center3)
-                        centroid_center_r3 +=1
-                        try:
-                            pts_r3=[item for item in pts3]
-                            pts_r3 = np.array(pts_r3)
-                            thickness =  int(np.sqrt(36 / float(centroid_center_r3 + 1)) * 2.5)
-                            ee = 0
-                            for point1, point2 in zip(pts_r3,pts_r3[1:]):
-                                if ee < 5:
-                                    cv2.line(img, point1,point2, color_list[2], thickness=7)
-                                    ee+=1
-                                else:
-                                    cv2.line(img, point1,point2, color_list[2], thickness)
-                                    ee+=1
-                        except:
-                            print('skipped from 3rd object')
+                        # pts3.appendleft(center3)
+                        # centroid_center_r3 +=1
+                        # try:
+                        #     pts_r3=[item for item in pts3]
+                        #     pts_r3 = np.array(pts_r3)
+                        #     thickness =  int(np.sqrt(36 / float(centroid_center_r3 + 1)) * 2.5)
+                        #     ee = 0
+                        #     for point1, point2 in zip(pts_r3,pts_r3[1:]):
+                        #         cv2.line(img, point1,point2, color_list[2], thickness)
+                        #         # if ee < 5:
+                        #         #     cv2.line(img, point1,point2, color_list[2], thickness=7)
+                        #         #     ee+=1
+                        #         # else:
+                        #         #     cv2.line(img, point1,point2, color_list[2], thickness)
+                        #         #     ee+=1
+                        # except:
+                        #     print('skipped from 3rd object')
                     if value[4] != '':
                         risk4 = value[4]
                         risk4 = re.sub("[()]","", risk4)
@@ -182,22 +189,23 @@ def main():
                         center4 = (int((risk4[0]+risk4[2]/2)),int((risk4[1]+risk4[3]/2)))
                         cv2.rectangle(img, risk4, color_list[3], thickness=2)
                         cv2.circle(img,center4,5,color_list[3],-1)
-                        pts4.appendleft(center4)
-                        centroid_center_r4 +=1
-                        try:
-                            pts_r4=[item for item in pts4]
-                            pts_r4 = np.array(pts_r4)
-                            thickness =  int(np.sqrt(36 / float(centroid_center_r4 + 1)) * 2.5)
-                            ff = 0
-                            for point1, point2 in zip(pts_r4,pts_r4[1:]):
-                                if ff < 5:
-                                    cv2.line(img, point1,point2, color_list[3], thickness=7)
-                                    ff+=1
-                                else:
-                                    cv2.line(img, point1,point2, color_list[3], thickness)
-                                    ff+=1
-                        except:
-                            print('skipped from 4th object')
+                        # pts4.appendleft(center4)
+                        # centroid_center_r4 +=1
+                        # try:
+                        #     pts_r4=[item for item in pts4]
+                        #     pts_r4 = np.array(pts_r4)
+                        #     thickness =  int(np.sqrt(36 / float(centroid_center_r4 + 1)) * 2.5)
+                        #     ff = 0
+                        #     for point1, point2 in zip(pts_r4,pts_r4[1:]):
+                        #         cv2.line(img, point1,point2, color_list[3], thickness)
+                                # if ff < 5:
+                                #     cv2.line(img, point1,point2, color_list[3], thickness=7)
+                                #     ff+=1
+                                # else:
+                                #     cv2.line(img, point1,point2, color_list[3], thickness)
+                                #     ff+=1
+                        # except:
+                        #     print('skipped from 4th object')
                     try:
                         video.write(img)
                         value = next(reader)
