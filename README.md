@@ -2,16 +2,6 @@
  Forked from https://github.com/Kazuhito00/OpenCV-Object-Tracker-Python-Sample
 
 # Requirement 
-* opencv-contrib-python 4.5.3.56 or later
+* opencv-contrib-python>=4.5.3.56
+* natsorted
 
-# Algorithm
-
-* DaSiamRPN
-* MIL
-* GOTURN
-* CSRT
-* KCF
-* Boosting(Legacy API)
-* MOSSE(Legacy API)
-* MedianFlow(Legacy API)
-* TLD(Legacy API)
