@@ -1,22 +1,16 @@
 '''
-Input: folders of frames + csv files
+Input: folders containing videos + csv files
 Output: tracked .mp4 videos
-Input folder structure:
+Input folder (--input_video) structure:
 -------------------------
---Demo
-    |-26_M
-        |-26_M_frame_0.jpg
-        |-26_M_frame_1.jpg
-        ...
-    |-27_M
-        |-27_M_frame_0.jpg
-        |-27_M_frame_1.jpg
-        ...
+--Sample_movie
+    |-26_M.mp4
+    |-27_M.mp4
     ...
     ...
 --------------------------
 
-bbox_dir should be as below:
+bbox_dir (--bbox_dir) should be as below:
 -------------------
 --tracking_results/file_list
     |-26_M.csv

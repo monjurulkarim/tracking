@@ -28,7 +28,6 @@ def log_information(video_id):
     logger.setLevel(logging.INFO)
     file_handler = logging.FileHandler('completion_log.log')
     formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
-
     file_handler.setFormatter(formatter)
     if not logger.hasHandlers():
         logger.addHandler(file_handler)
