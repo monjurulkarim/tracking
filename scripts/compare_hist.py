@@ -1,5 +1,6 @@
 '''
-Input: long video folder directory
+To get the frames : ffmpeg -i input/m1.mp4 -vf "scale=1080:720,fps=20" m1_ffmpeg/m01_%04d.jpg
+Input: long video folder directory (frames inside the folder)
 output: A text file containing starting frame numbers
 ---------------------------------------------------------------------------------------
 This script uses opencv compare histogram to compare each video frames with it's previous
@@ -21,8 +22,8 @@ def get_args():
     takes the input video directory as an argument.
     '''
     parser = argparse.ArgumentParser()
-    parser = add_argument("--data_dir", default="../../../../data/crash_dataset_monjurul/")
-    parser.add_argument("--frames_dir", default="v1/")
+    parser.add_argument("--data_dir", default="m3/")
+    # parser.add_argument("--frames_dir", default="m1/")
     args = parser.parse_args()
     return args
 
@@ -41,9 +42,9 @@ def save_text(starting_frames):
 def main():
     args = get_args()
     data_dir = args.data_dir
-    folder_dir = data_dir +args.frames_dir
-    frames_dir = os.path.abspath(os.path.join(__file__ ,frames_folder))
-    paths = natsorted(glob.glob(os.path.join(frames_dir, '*.jpg')))
+    # folder_dir = data_dir +args.frames_dir
+    # frames_dir = os.path.abspath(os.path.join(__file__ ,frames_folder))
+    paths = natsorted(glob.glob(os.path.join(data_dir, '*.jpg')))
     starting_frames = compare_hist(paths)
     save_text(starting_frames)
     return
